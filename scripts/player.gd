@@ -1,9 +1,8 @@
 extends CharacterBody3D
 
-# Movement constants (CS:GO inspired values)
+# Movement constants
 const WALK_SPEED = 5.0
-const RUN_SPEED = 7.0
-const CROUCH_SPEED = 2.5
+const RUN_SPEED = 10.0
 const JUMP_VELOCITY = 10.0
 const AIR_ACCELERATION = 2.0
 const GROUND_ACCELERATION = 40.0
@@ -16,7 +15,6 @@ const MOUSE_SENSITIVITY = 0.002
 
 # Movement variables
 var speed = WALK_SPEED
-var is_crouching = false
 var wish_dir = Vector3.ZERO
 
 # Camera nodes
@@ -61,9 +59,6 @@ func handle_movement(delta):
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 	
-	# Handle crouching
-	is_crouching = Input.is_action_pressed("crouch")
-	
 	# Get input direction
 	var input_dir = Vector2.ZERO
 	if Input.is_action_pressed("move_forward"):
@@ -83,9 +78,7 @@ func handle_movement(delta):
 	wish_dir = wish_dir.rotated(Vector3.UP, rotation.y)
 	
 	# Determine current speed based on state
-	if is_crouching:
-		speed = CROUCH_SPEED
-	elif Input.is_action_pressed("run"):
+	if Input.is_action_pressed("run"):
 		speed = RUN_SPEED
 	else:
 		speed = WALK_SPEED
