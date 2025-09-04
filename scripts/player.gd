@@ -4,11 +4,11 @@ extends CharacterBody3D
 const WALK_SPEED = 5.0
 const RUN_SPEED = 7.0
 const CROUCH_SPEED = 2.5
-const JUMP_VELOCITY = 8.5
+const JUMP_VELOCITY = 10.0
 const AIR_ACCELERATION = 2.0
-const GROUND_ACCELERATION = 10.0
-const GROUND_FRICTION = 6.0
-const AIR_FRICTION = 0.2
+const GROUND_ACCELERATION = 20.0
+const GROUND_FRICTION = 15.0
+const AIR_FRICTION = 0.5
 const MAX_SPEED = 10.0
 
 # Mouse sensitivity
@@ -24,7 +24,7 @@ var wish_dir = Vector3.ZERO
 @onready var camera = $CameraPivot/Camera3D
 
 # Get the gravity from the project settings to be synced with RigidBody nodes
-var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
+var gravity = ProjectSettings.get_setting("physics/3d/default_gravity") * 2.0 * 1.5
 
 func _ready():
 	# Capture mouse cursor
@@ -109,11 +109,15 @@ func ground_movement(delta):
 			
 			velocity += wish_dir * acceleration_speed
 	else:
-		# Apply friction when no input
-		var friction_speed = GROUND_FRICTION * delta
-		if velocity.length() > friction_speed:
-			velocity = velocity.normalized() * (velocity.length() - friction_speed)
+		# Apply stronger friction when no input for tighter control
+		var horizontal_velocity = Vector3(velocity.x, 0, velocity.z)
+		var friction_force = GROUND_FRICTION * delta
+		
+		if horizontal_velocity.length() > friction_force:
+			var friction_direction = -horizontal_velocity.normalized()
+			velocity += friction_direction * friction_force
 		else:
+			# Stop completely if velocity is very small
 			velocity.x = 0
 			velocity.z = 0
 
