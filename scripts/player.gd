@@ -6,9 +6,9 @@ const RUN_SPEED = 7.0
 const CROUCH_SPEED = 2.5
 const JUMP_VELOCITY = 10.0
 const AIR_ACCELERATION = 2.0
-const GROUND_ACCELERATION = 20.0
-const GROUND_FRICTION = 15.0
-const AIR_FRICTION = 0.5
+const GROUND_ACCELERATION = 40.0
+const GROUND_FRICTION = 35.0
+const AIR_FRICTION = 1.5
 const MAX_SPEED = 10.0
 
 # Mouse sensitivity
@@ -108,14 +108,30 @@ func ground_movement(delta):
 				acceleration_speed = add_speed
 			
 			velocity += wish_dir * acceleration_speed
+		
+		# Cap horizontal speed to prevent speed bug when rotating
+		var horizontal_velocity = Vector3(velocity.x, 0, velocity.z)
+		if horizontal_velocity.length() > speed:
+			horizontal_velocity = horizontal_velocity.normalized() * speed
+			velocity.x = horizontal_velocity.x
+			velocity.z = horizontal_velocity.z
 	else:
-		# Apply stronger friction when no input for tighter control
+		# Apply much stronger friction when no input for tighter control
 		var horizontal_velocity = Vector3(velocity.x, 0, velocity.z)
 		var friction_force = GROUND_FRICTION * delta
 		
-		if horizontal_velocity.length() > friction_force:
+		# Apply friction more aggressively
+		if horizontal_velocity.length() > 0.1:  # Small threshold for stopping
 			var friction_direction = -horizontal_velocity.normalized()
-			velocity += friction_direction * friction_force
+			var new_velocity = horizontal_velocity + friction_direction * friction_force
+			
+			# If friction would overshoot, just stop
+			if new_velocity.dot(horizontal_velocity) <= 0:
+				velocity.x = 0
+				velocity.z = 0
+			else:
+				velocity.x = new_velocity.x
+				velocity.z = new_velocity.z
 		else:
 			# Stop completely if velocity is very small
 			velocity.x = 0
