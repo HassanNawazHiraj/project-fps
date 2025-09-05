@@ -1,7 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://b7x8gqvf7vbm0"]
+[gd_scene load_steps=11 format=3 uid="uid://b7x8gqvf7vbm0"]
 
 [ext_resource type="PackedScene" uid="uid://bcd1hkgcwpmql" path="res://scenes/player.tscn" id="1_k8m4x"]
 [ext_resource type="PackedScene" uid="uid://bk4j5l8nan0p1" path="res://scenes/ui.tscn" id="2_ui_scene"]
+[ext_resource type="PackedScene" path="res://scenes/zombie.tscn" id="3_zombie"]
+[ext_resource type="PackedScene" path="res://scenes/gun_pickup.tscn" id="4_gun_pickup"]
 
 [sub_resource type="Environment" id="Environment_1"]
 background_mode = 1
@@ -41,11 +43,20 @@ transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -
 shadow_enabled = true
 
 [node name="Player" parent="." instance=ExtResource("1_k8m4x")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2881, 2, 12.2776)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2881, 11.5891, 0.672314)
 
 [node name="UI" parent="." instance=ExtResource("2_ui_scene")]
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Zombie1" parent="." instance=ExtResource("3_zombie")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.6, 25.8767, 21.8495)
+
+[node name="Zombie2" parent="." instance=ExtResource("3_zombie")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 21.7436, -19.5276)
+
+[node name="GunPickup1" parent="." instance=ExtResource("4_gun_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.6434, 3.00171, 20.1624)
 
 [node name="Ground" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)

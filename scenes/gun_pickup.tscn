@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=3 uid="uid://gun_pickup_scene"]
+
+[ext_resource type="Script" path="res://scripts/gun_pickup.gd" id="1_pickup_script"]
+
+[sub_resource type="StandardMaterial3D" id="GunMaterial"]
+albedo_color = Color(0.2, 0.2, 0.2, 1)
+metallic = 0.8
+roughness = 0.3
+
+[sub_resource type="StandardMaterial3D" id="WoodMaterial"]
+albedo_color = Color(0.6, 0.4, 0.2, 1)
+roughness = 0.9
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pickup"]
+size = Vector3(2, 1, 0.5)
+
+[node name="GunPickup" type="Area3D"]
+script = ExtResource("1_pickup_script")
+
+[node name="PickupModel" type="Node3D" parent="."]
+
+[node name="Receiver" type="CSGBox3D" parent="PickupModel"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 0.1, 0)
+material_override = SubResource("GunMaterial")
+size = Vector3(0.8, 0.25, 0.15)
+
+[node name="Barrel" type="CSGBox3D" parent="PickupModel"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0.4, 0.1, -0.4)
+material_override = SubResource("GunMaterial")
+size = Vector3(1.2, 0.08, 0.08)
+
+[node name="Stock" type="CSGBox3D" parent="PickupModel"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -0.35, 0, 0.35)
+material_override = SubResource("WoodMaterial")
+size = Vector3(0.6, 0.15, 0.12)
+
+[node name="Magazine" type="CSGBox3D" parent="PickupModel"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0.07, -0.25, -0.07)
+material_override = SubResource("GunMaterial")
+size = Vector3(0.15, 0.4, 0.08)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_pickup")
+
+[node name="RotationTimer" type="Timer" parent="."]
+wait_time = 0.05
+autostart = true

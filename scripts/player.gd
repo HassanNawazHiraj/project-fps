@@ -16,6 +16,9 @@ const MOUSE_SENSITIVITY = 0.001
 # Health constants
 const MAX_HEALTH = 100.0
 
+# Gun constants
+const GUN_POSITION = Vector3(0.3, -0.3, -0.8)  # Position relative to camera
+
 # Movement variables
 var speed = WALK_SPEED
 var wish_dir = Vector3.ZERO
@@ -23,8 +26,14 @@ var wish_dir = Vector3.ZERO
 # Health variables
 var current_health = MAX_HEALTH
 
+# Gun variables
+var current_gun = null  # Will hold Gun instance
+var has_gun = false
+
 # Signals
 signal health_changed(new_health, max_health)
+signal gun_equipped(gun_name: String)
+signal ammo_updated(current_ammo: int, total_ammo: int)
 
 # Camera nodes
 @onready var camera_pivot = $CameraPivot
@@ -40,6 +49,9 @@ func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	# Emit initial health signal
 	health_changed.emit(current_health, MAX_HEALTH)
+	
+	# Connect to gun pickup signals
+	_connect_gun_pickups()
 
 # Health functions
 func take_damage(damage: float):
@@ -81,6 +93,12 @@ func _input(event):
 		take_damage(10)
 	if event.is_action_pressed("ui_right"):  # Right arrow key
 		heal(10)
+	
+	# Gun controls
+	if event.is_action_pressed("shoot") and has_gun:
+		shoot()
+	if event.is_action_pressed("reload") and has_gun:
+		reload_gun()
 
 func _physics_process(delta):
 	handle_movement(delta)
@@ -195,3 +213,105 @@ func air_movement(delta):
 		var ratio = MAX_SPEED / horizontal_speed
 		velocity.x *= ratio
 		velocity.z *= ratio
+
+# Gun Functions
+func equip_gun(gun_type: String, ammo_amount: int):
+	# Load gun scene
+	var gun_scene = load("res://scenes/m1_gun.tscn")
+	var gun_instance = gun_scene.instantiate()
+	
+	# Remove old gun if exists
+	if current_gun:
+		current_gun.queue_free()
+	
+	# Add new gun to camera
+	camera.add_child(gun_instance)
+	gun_instance.position = GUN_POSITION
+	current_gun = gun_instance
+	has_gun = true
+	
+	# Connect gun signals
+	current_gun.ammo_changed.connect(_on_gun_ammo_changed)
+	current_gun.fired.connect(_on_gun_fired)
+	current_gun.reload_started.connect(_on_gun_reload_started)
+	current_gun.reload_finished.connect(_on_gun_reload_finished)
+	
+	# Give initial ammo
+	current_gun.pickup_gun(ammo_amount)
+	
+	# Emit signals
+	gun_equipped.emit(gun_type)
+	print("Equipped ", gun_type, " rifle!")
+
+func add_ammo(ammo_amount: int):
+	if current_gun:
+		current_gun.pickup_gun(ammo_amount)
+
+func shoot():
+	if current_gun and current_gun.can_shoot():
+		if current_gun.shoot():
+			# Perform raycast for hit detection
+			_perform_gun_raycast()
+
+func reload_gun():
+	if current_gun:
+		current_gun.reload()
+
+func _perform_gun_raycast():
+	# Cast ray from camera center to detect hits
+	var space_state = get_world_3d().direct_space_state
+	var camera_transform = camera.global_transform
+	var from = camera_transform.origin
+	var to = from + camera_transform.basis.z * -100  # 100 units forward
+	
+	var query = PhysicsRayQueryParameters3D.create(from, to)
+	query.exclude = [self]  # Don't hit the player
+	
+	var result = space_state.intersect_ray(query)
+	if result:
+		var hit_object = result.collider
+		
+		# Check if we hit a zombie
+		if hit_object.has_method("take_damage"):
+			hit_object.take_damage(current_gun.DAMAGE)
+			print("Hit target for ", current_gun.DAMAGE, " damage!")
+		else:
+			print("Hit ", hit_object.name)
+
+# Gun signal handlers
+func _on_gun_ammo_changed(current_ammo: int, total_ammo: int):
+	ammo_updated.emit(current_ammo, total_ammo)
+
+func _on_gun_fired():
+	# Add muzzle flash, sound effects, etc. later
+	pass
+
+func _on_gun_reload_started():
+	print("Reloading...")
+	# Show reload UI
+	var ui = get_tree().get_first_node_in_group("ui")
+	if ui and ui.has_method("show_reload_message"):
+		ui.show_reload_message()
+
+func _on_gun_reload_finished():
+	print("Reload complete!")
+	# Hide reload UI
+	var ui = get_tree().get_first_node_in_group("ui")
+	if ui and ui.has_method("hide_reload_message"):
+		ui.hide_reload_message()
+
+func _connect_gun_pickups():
+	# Connect to all gun pickups in the scene
+	await get_tree().process_frame  # Wait for scene to be ready
+	var gun_pickups = get_tree().get_nodes_in_group("gun_pickups")
+	for pickup in gun_pickups:
+		if pickup.has_signal("gun_picked_up"):
+			pickup.gun_picked_up.connect(_on_gun_pickup)
+
+func _on_gun_pickup(gun_type: String, ammo_amount: int):
+	if has_gun and current_gun:
+		# Already have gun, just add ammo
+		add_ammo(ammo_amount)
+	else:
+		# Equip the gun
+		equip_gun(gun_type, ammo_amount)

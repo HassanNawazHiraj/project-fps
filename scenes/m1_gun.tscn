@@ -1,0 +1,60 @@
+[gd_scene load_steps=6 format=3 uid="uid://m1_gun_scene"]
+
+[ext_resource type="Script" path="res://scripts/gun.gd" id="1_gun_script"]
+
+[sub_resource type="StandardMaterial3D" id="GunMaterial"]
+albedo_color = Color(0.2, 0.2, 0.2, 1)
+metallic = 0.8
+roughness = 0.3
+
+[sub_resource type="StandardMaterial3D" id="WoodMaterial"]
+albedo_color = Color(0.6, 0.4, 0.2, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="BarrelMaterial"]
+albedo_color = Color(0.1, 0.1, 0.1, 1)
+metallic = 0.9
+roughness = 0.2
+
+[node name="M1Gun" type="Node3D"]
+script = ExtResource("1_gun_script")
+
+[node name="GunModel" type="Node3D" parent="."]
+
+[node name="Receiver" type="CSGBox3D" parent="GunModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("GunMaterial")
+size = Vector3(0.8, 0.25, 0.15)
+
+[node name="Barrel" type="CSGBox3D" parent="GunModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0, 0)
+material_override = SubResource("BarrelMaterial")
+size = Vector3(1.2, 0.08, 0.08)
+
+[node name="Stock" type="CSGBox3D" parent="GunModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, -0.1, 0)
+material_override = SubResource("WoodMaterial")
+size = Vector3(0.6, 0.15, 0.12)
+
+[node name="Grip" type="CSGBox3D" parent="GunModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, -0.25, 0)
+material_override = SubResource("WoodMaterial")
+size = Vector3(0.12, 0.3, 0.1)
+
+[node name="Trigger" type="CSGBox3D" parent="GunModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, -0.18, 0)
+material_override = SubResource("GunMaterial")
+size = Vector3(0.05, 0.08, 0.03)
+
+[node name="Magazine" type="CSGBox3D" parent="GunModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, -0.35, 0)
+material_override = SubResource("GunMaterial")
+size = Vector3(0.15, 0.4, 0.08)
+
+[node name="Sight" type="CSGBox3D" parent="GunModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0.15, 0)
+material_override = SubResource("GunMaterial")
+size = Vector3(0.03, 0.1, 0.03)
+
+[node name="MuzzlePoint" type="Marker3D" parent="GunModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 0)
