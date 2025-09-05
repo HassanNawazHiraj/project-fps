@@ -11,11 +11,20 @@ const AIR_FRICTION = 1.5
 const MAX_SPEED = 10.0
 
 # Mouse sensitivity
-const MOUSE_SENSITIVITY = 0.002
+const MOUSE_SENSITIVITY = 0.001
+
+# Health constants
+const MAX_HEALTH = 100.0
 
 # Movement variables
 var speed = WALK_SPEED
 var wish_dir = Vector3.ZERO
+
+# Health variables
+var current_health = MAX_HEALTH
+
+# Signals
+signal health_changed(new_health, max_health)
 
 # Camera nodes
 @onready var camera_pivot = $CameraPivot
@@ -25,8 +34,30 @@ var wish_dir = Vector3.ZERO
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity") * 2.0 * 1.5
 
 func _ready():
+	# Add player to group for UI reference
+	add_to_group("player")
 	# Capture mouse cursor
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	# Emit initial health signal
+	health_changed.emit(current_health, MAX_HEALTH)
+
+# Health functions
+func take_damage(damage: float):
+	current_health = max(0, current_health - damage)
+	health_changed.emit(current_health, MAX_HEALTH)
+	
+	if current_health <= 0:
+		die()
+
+func heal(amount: float):
+	current_health = min(MAX_HEALTH, current_health + amount)
+	health_changed.emit(current_health, MAX_HEALTH)
+
+func die():
+	print("Player died!")
+	# Reset health for now (you can add respawn logic later)
+	current_health = MAX_HEALTH
+	health_changed.emit(current_health, MAX_HEALTH)
 
 func _input(event):
 	# Handle mouse look
@@ -44,6 +75,12 @@ func _input(event):
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	
+	# Test health system (for demonstration)
+	if event.is_action_pressed("ui_left"):  # Left arrow key
+		take_damage(10)
+	if event.is_action_pressed("ui_right"):  # Right arrow key
+		heal(10)
 
 func _physics_process(delta):
 	handle_movement(delta)

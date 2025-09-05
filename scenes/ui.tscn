@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3 uid="uid://bk4j5l8nan0p1"]
+
+[ext_resource type="Script" path="res://scripts/ui_manager.gd" id="1_ui_script"]
+
+[node name="UI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1_ui_script")
+
+[node name="HealthText" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 50.0
+text = "Health: 100"
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 18

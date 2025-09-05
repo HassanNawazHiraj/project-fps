@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://b7x8gqvf7vbm0"]
+[gd_scene load_steps=9 format=3 uid="uid://b7x8gqvf7vbm0"]
 
 [ext_resource type="PackedScene" uid="uid://bcd1hkgcwpmql" path="res://scenes/player.tscn" id="1_k8m4x"]
+[ext_resource type="PackedScene" uid="uid://bk4j5l8nan0p1" path="res://scenes/ui.tscn" id="2_ui_scene"]
 
 [sub_resource type="Environment" id="Environment_1"]
 background_mode = 1
@@ -41,6 +42,10 @@ shadow_enabled = true
 
 [node name="Player" parent="." instance=ExtResource("1_k8m4x")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2881, 2, 12.2776)
+
+[node name="UI" parent="." instance=ExtResource("2_ui_scene")]
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Ground" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
@@ -161,10 +166,10 @@ size = Vector3(3, 1.47314, 3)
 [node name="BSite" type="Node3D" parent="."]
 
 [node name="BSitePlatform" type="CSGBox3D" parent="BSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0.5, -25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.9942, 0.5, -27.1363)
 material_override = SubResource("PlatformMaterial")
 use_collision = true
-size = Vector3(20, 1, 20)
+size = Vector3(20.7706, 1, 15.7274)
 
 [node name="BSiteWall2" type="CSGBox3D" parent="BSite"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 3, -35)
@@ -175,16 +180,16 @@ size = Vector3(20, 6, 2)
 [node name="BTunnels" type="Node3D" parent="."]
 
 [node name="BTunnelWall1" type="CSGBox3D" parent="BTunnels"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 3, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 3, -5.88794)
 material_override = SubResource("WallMaterial")
 use_collision = true
-size = Vector3(2, 6, 20)
+size = Vector3(2, 6, 22.2231)
 
 [node name="BTunnelWall2" type="CSGBox3D" parent="BTunnels"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 3, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 3, -6.13925)
 material_override = SubResource("WallMaterial")
 use_collision = true
-size = Vector3(2, 6, 20)
+size = Vector3(2, 6, 23.1318)
 
 [node name="BTunnelCeiling" type="CSGBox3D" parent="BTunnels"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 6, -5)
@@ -195,10 +200,10 @@ size = Vector3(10, 1, 20)
 [node name="UpperTunnels" type="Node3D" parent="."]
 
 [node name="UpperTunnelPlatform" type="CSGBox3D" parent="UpperTunnels"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.5689, 0.0700674, -21.1744)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.5689, 0.0700674, -21.0778)
 material_override = SubResource("PlatformMaterial")
 use_collision = true
-size = Vector3(15, 1, 10)
+size = Vector3(15, 1, 11.0409)
 
 [node name="UpperTunnelWall1" type="CSGBox3D" parent="UpperTunnels"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45.0689, 2.07007, -21.1744)
@@ -217,7 +222,7 @@ size = Vector3(1, 4, 10)
 [node name="Ramps" type="Node3D" parent="."]
 
 [node name="RampToB" type="CSGBox3D" parent="Ramps"]
-transform = Transform3D(0.866025, -0.25, 0, 0.25, 0.866025, 0, 0, 0, 1, 22.2462, 2.64843, -15)
+transform = Transform3D(0.8199, -0.374517, 0, 0.374517, 0.8199, 0, 0, 0, 1, 22.2512, 2.64843, -15)
 use_collision = true
 size = Vector3(15.1874, 1, 4)
 
